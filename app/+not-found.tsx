@@ -1,6 +1,5 @@
 import { Link, Stack } from 'expo-router';
-import { StyleSheet } from 'react-native';
-import { Text, View } from 'react-native-reanimated/lib/typescript/Animated';
+import { StyleSheet, Text, View } from 'react-native';
 
 export default function NotFoundScreen() {
     return (
