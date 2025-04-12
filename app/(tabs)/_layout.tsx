@@ -2,7 +2,7 @@ import { HapticTab } from '@/components/HapticTab';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Feather from '@expo/vector-icons/Feather';
-import { Tabs,useRouter } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '@/utils/colors';
@@ -16,6 +16,10 @@ export default function TabLayout() {
             screenOptions={{
                 tabBarActiveTintColor: Colors.accent,
                 headerShown: true,
+                headerStyle: {
+                    backgroundColor: Colors.primary,
+                    maxHeight: 64,
+                },
                 headerTitle: () => (
                     <View style={styles.headerTitle}>
                         <View style={styles.brandWrapper}>
@@ -32,7 +36,7 @@ export default function TabLayout() {
                 headerRight: () => (
                     <View style={styles.headerRight}>
                         <Pressable
-                            onPress={() => router.navigate('../newPost')}
+                            onPress={() => router.navigate('../newEntry')}
                         >
                             <FontAwesome6
                                 name="pencil"

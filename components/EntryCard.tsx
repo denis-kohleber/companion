@@ -9,7 +9,7 @@ interface Props {
     description: string;
 }
 
-export default function PostCard({ title, description }: Props) {
+export default function EntryCard({ title, description }: Props) {
     return (
         <View style={styles.container}>
             <View style={styles.rectangle} />

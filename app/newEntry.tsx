@@ -1,10 +1,35 @@
 import { View, ScrollView, TextInput, Button } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { Colors } from '@/utils/colors';
 import { useRouter } from 'expo-router';
+import { storage } from '@/utils/storage';
+import Entry from '@/types/entryType';
 
-export default function NewPost() {
+export default function NewEntry() {
     const router = useRouter();
+    const [title, setTitle] = useState<string>('');
+    const [description, setDescription] = useState<string>('');
+
+    const handleSave = async () => {
+        if (!title || !description) {
+            alert('Bitte fülle alle Felder aus.');
+            return;
+        }
+
+        const newEntry: Entry = {
+            id: Date.now().toString(),
+            title,
+            description,
+            date: new Date().toISOString(),
+            isMarked: false,
+        };
+
+        const entries = await storage.getEntries();
+        entries.push(newEntry);
+        await storage.saveEntries(entries);
+
+        router.navigate('/(tabs)');
+    };
 
     return (
         <ScrollView>
@@ -13,6 +38,7 @@ export default function NewPost() {
                     <TextInput
                         style={styles.titleInput}
                         placeholder="Überschrift"
+                        onChangeText={setTitle}
                     />
                     <TextInput
                         multiline
@@ -20,12 +46,13 @@ export default function NewPost() {
                         style={styles.descriptionInput}
                         placeholder="Wie war dein Tag?"
                         textAlignVertical="top"
+                        onChangeText={setDescription}
                     />
                     <View style={styles.buttonContainer}>
                         <Button
                             title="Speichern"
-                            onPress={() => console.log('Button betätigt.')}
                             color={Colors.accent}
+                            onPress={handleSave}
                         />
                         <Button
                             title="Abbrechen"
