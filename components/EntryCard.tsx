@@ -3,13 +3,28 @@ import React from 'react';
 import { Colors } from '@/utils/colors';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/store/storage';
+import { deleteEntry, bookmarkEntry } from '@/store/reducers/entriesSlice';
 
 interface Props {
     title: string;
     description: string;
+    id: string;
+    isMarked: boolean;
 }
 
-export default function EntryCard({ title, description }: Props) {
+export default function EntryCard({ title, description, id, isMarked }: Props) {
+    const dispatch = useDispatch<AppDispatch>();
+
+    const handleDeleteEntry = (id: string) => {
+        dispatch(deleteEntry(id));
+    };
+
+    const handleBookmarkEntry = (id: string) => {
+        dispatch(bookmarkEntry(id));
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.rectangle} />
@@ -19,17 +34,17 @@ export default function EntryCard({ title, description }: Props) {
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity
                             style={styles.button}
-                            onPress={() => console.log('Button pressed')}
+                            onPress={() => handleBookmarkEntry(id)}
                         >
                             <FontAwesome
                                 name="bookmark"
                                 size={24}
-                                color={Colors.border}
+                                color={isMarked ? Colors.accent2 : Colors.border}
                             />
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.button}
-                            onPress={() => console.log('Button pressed')}
+                            onPress={() => handleDeleteEntry(id)}
                         >
                             <MaterialCommunityIcons
                                 name="trash-can-outline"

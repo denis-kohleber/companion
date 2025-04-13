@@ -34,6 +34,13 @@ const entriesSlice = createSlice({
       state.data = state.data.filter(entry => entry.id !== action.payload);
       AsyncStorage.setItem('entries', JSON.stringify(state.data));
     },
+    bookmarkEntry: (state, action: PayloadAction<string>) => {
+      const entry = state.data.find(entry => entry.id === action.payload);
+      if (entry) {
+        entry.isMarked = !entry.isMarked;
+        AsyncStorage.setItem('entries', JSON.stringify(state.data));
+      }
+    },
   },
   extraReducers: (builder) => {
     // Handle the async thunk actions
@@ -48,5 +55,5 @@ const entriesSlice = createSlice({
   },
 });
 
-export const { addEntry, deleteEntry } = entriesSlice.actions;
+export const { addEntry, deleteEntry, bookmarkEntry } = entriesSlice.actions;
 export default entriesSlice.reducer;

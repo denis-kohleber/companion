@@ -18,7 +18,7 @@ export default function Index() {
     return (
         <ScrollView>
             <View style={styles.main}>
-                {!isLoading ? (
+                {isLoading ? (
                     <View style={styles.loadingSpinnerContainer}>
                         <ActivityIndicator
                             style={styles.loadingSpinner}
@@ -33,8 +33,10 @@ export default function Index() {
                         .map((entry: Entry) => (
                             <EntryCard
                                 key={entry.id}
+                                id={entry.id}
                                 title={entry.title}
                                 description={entry.description}
+                                isMarked={entry.isMarked}
                             />
                         ))
                 )}
