@@ -2,15 +2,18 @@ import { View, ScrollView, TextInput, Button } from 'react-native';
 import React, { useState } from 'react';
 import { Colors } from '@/utils/colors';
 import { useRouter } from 'expo-router';
-import { storage } from '@/utils/storage';
 import Entry from '@/types/entryType';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/store/storage';
+import { addEntry } from '@/store/reducers/entriesSlice';
 
 export default function NewEntry() {
     const router = useRouter();
+    const dispatch = useDispatch<AppDispatch>();
     const [title, setTitle] = useState<string>('');
     const [description, setDescription] = useState<string>('');
 
-    const handleSave = async () => {
+    const handleSave = () => {
         if (!title || !description) {
             alert('Bitte fülle alle Felder aus.');
             return;
@@ -24,9 +27,7 @@ export default function NewEntry() {
             isMarked: false,
         };
 
-        const entries = await storage.getEntries();
-        entries.push(newEntry);
-        await storage.saveEntries(entries);
+        dispatch(addEntry(newEntry));
 
         router.navigate('/(tabs)');
     };

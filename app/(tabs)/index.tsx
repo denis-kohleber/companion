@@ -1,34 +1,43 @@
 import EntryCard from '@/components/EntryCard';
+import { initializeEntries } from '@/store/reducers/entriesSlice';
+import { useAppDispatch, useAppSelector } from '@/store/storage';
 import Entry from '@/types/entryType';
-import { storage } from '@/utils/storage';
-import { useEffect, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { Colors } from '@/utils/colors';
+import { useEffect } from 'react';
+import { ActivityIndicator, ScrollView, View } from 'react-native';
 
 export default function Index() {
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [entries, setEntries] = useState<Entry[]>([]);
+    const dispatch = useAppDispatch();
+    const entries = useAppSelector((state) => state.entries.data);
+    const isLoading = useAppSelector((state) => state.entries.isLoading);
 
     useEffect(() => {
-        const loadEntries = async () => {
-            setIsLoading(true);
-            const loadedEntries = await storage.getEntries();
-            setEntries(loadedEntries);
-            setIsLoading(false);
-        };
-        loadEntries();
-    }, []);
+        dispatch(initializeEntries());
+    }, [dispatch]);
 
     return (
         <ScrollView>
             <View style={styles.main}>
-                 {isLoading && <Text>Wird geladen ...</Text>}
-                {entries.slice().reverse().map((entry: Entry) => (
-                    <EntryCard
-                        key={entry.id}
-                        title={entry.title}
-                        description={entry.description}
-                    />
-                ))}
+                {!isLoading ? (
+                    <View style={styles.loadingSpinnerContainer}>
+                        <ActivityIndicator
+                            style={styles.loadingSpinner}
+                            size={100}
+                            color={Colors.accent2}
+                        />
+                    </View>
+                ) : (
+                    entries
+                        .slice()
+                        .reverse()
+                        .map((entry: Entry) => (
+                            <EntryCard
+                                key={entry.id}
+                                title={entry.title}
+                                description={entry.description}
+                            />
+                        ))
+                )}
             </View>
         </ScrollView>
     );
@@ -39,5 +48,12 @@ const styles = {
         padding: 15,
         flex: 1,
         gap: 10,
+    },
+    loadingSpinner: {},
+    loadingSpinnerContainer: {
+        flex: 1,
+        height: 300,
+        justifyContent: 'center' as 'center',
+        alignItems: 'center' as 'center',
     },
 };
