@@ -4,7 +4,7 @@ import { Colors } from '@/utils/colors';
 import { useEffect } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { useAppDispatch, useAppSelector } from '@/store/storage';
-import Entry from '@/types/entryType';
+import {Entry} from '@/types/coreTypes';
 import { initializeEntries } from '@/store/reducers/entriesSlice';
 import EntryCard from '@/components/EntryCard';
 
@@ -40,6 +40,7 @@ export default function Favorites() {
                                 title={entry.title}
                                 description={entry.description}
                                 isMarked={entry.isMarked}
+                                date={entry.date}
                             />
                         ))
                 )}

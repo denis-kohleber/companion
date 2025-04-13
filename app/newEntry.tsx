@@ -2,7 +2,7 @@ import { View, ScrollView, TextInput, Button } from 'react-native';
 import React, { useState } from 'react';
 import { Colors } from '@/utils/colors';
 import { useRouter } from 'expo-router';
-import Entry from '@/types/entryType';
+import { Entry } from '@/types/coreTypes';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store/storage';
 import { addEntry } from '@/store/reducers/entriesSlice';

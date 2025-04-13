@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Entry from '@/types/entryType';
+import { Entry } from '@/types/coreTypes';
 
 // Async thunk to initialize entries from AsyncStorage
 export const initializeEntries = createAsyncThunk(

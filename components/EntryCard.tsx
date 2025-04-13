@@ -6,15 +6,14 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store/storage';
 import { deleteEntry, bookmarkEntry } from '@/store/reducers/entriesSlice';
+import { useNavigation } from 'expo-router';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList, Entry } from '@/types/coreTypes';
 
-interface Props {
-    title: string;
-    description: string;
-    id: string;
-    isMarked: boolean;
-}
+export default function EntryCard({ title, description, id, isMarked }: Entry) {
+    const navigation =
+        useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-export default function EntryCard({ title, description, id, isMarked }: Props) {
     const dispatch = useDispatch<AppDispatch>();
 
     const handleDeleteEntry = (id: string) => {
@@ -26,11 +25,28 @@ export default function EntryCard({ title, description, id, isMarked }: Props) {
     };
 
     return (
-        <View style={styles.container}>
+        <TouchableOpacity
+            style={styles.container}
+            onPress={() =>
+                navigation.navigate('entryDetail', {
+                    id,
+                    title,
+                    description,
+                    isMarked,
+                    date: new Date().toISOString(),
+                })
+            }
+        >
             <View style={styles.rectangle} />
             <View style={styles.main}>
                 <View style={styles.cardHeader}>
-                    <Text style={styles.title}>{title}</Text>
+                    <Text
+                        style={styles.title}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                    >
+                        {title}
+                    </Text>
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity
                             style={styles.button}
@@ -39,7 +55,9 @@ export default function EntryCard({ title, description, id, isMarked }: Props) {
                             <FontAwesome
                                 name="bookmark"
                                 size={24}
-                                color={isMarked ? Colors.accent2 : Colors.border}
+                                color={
+                                    isMarked ? Colors.accent2 : Colors.border
+                                }
                             />
                         </TouchableOpacity>
                         <TouchableOpacity
@@ -62,7 +80,7 @@ export default function EntryCard({ title, description, id, isMarked }: Props) {
                     {description}
                 </Text>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 }
 
@@ -76,6 +94,7 @@ const styles = StyleSheet.create({
         gap: 20,
         borderWidth: 1,
         borderColor: Colors.border,
+        elevation: 5,
     },
     rectangle: {
         height: '100%',
@@ -95,6 +114,7 @@ const styles = StyleSheet.create({
         color: Colors.secondary,
         fontSize: 20,
         fontWeight: 400,
+        maxWidth: 210,
     },
     description: {
         color: Colors.secondary,

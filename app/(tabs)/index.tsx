@@ -1,7 +1,7 @@
 import EntryCard from '@/components/EntryCard';
 import { initializeEntries } from '@/store/reducers/entriesSlice';
 import { useAppDispatch, useAppSelector } from '@/store/storage';
-import Entry from '@/types/entryType';
+import { Entry } from '@/types/coreTypes';
 import { Colors } from '@/utils/colors';
 import { useEffect } from 'react';
 import { ActivityIndicator, ScrollView, View } from 'react-native';
@@ -37,6 +37,7 @@ export default function Index() {
                                 title={entry.title}
                                 description={entry.description}
                                 isMarked={entry.isMarked}
+                                date={entry.date}
                             />
                         ))
                 )}
