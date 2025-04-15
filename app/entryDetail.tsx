@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import React from 'react';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { Colors } from '@/utils/colors';
@@ -8,16 +8,19 @@ type EntryDetailRouteProp = RouteProp<RootStackParamList, 'entryDetail'>;
 
 export default function EntryDetailScreen() {
     const route = useRoute<EntryDetailRouteProp>();
-    const { title, description, date } = route.params;
+    const { title, description, date, uri } = route.params;
 
     return (
         <ScrollView style={styles.container}>
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.date}>
-                {new Date(date).toLocaleDateString()}
-            </Text>
-            <View style={styles.partingLine} />
-            <Text style={styles.description}>{description}</Text>
+            {uri ? <Image source={{ uri: uri }} style={styles.image} /> : null}
+            <View style={styles.main}>
+                <Text style={styles.title}>{title}</Text>
+                <Text style={styles.date}>
+                    {new Date(date).toLocaleDateString()}
+                </Text>
+                <View style={styles.partingLine} />
+                <Text style={styles.description}>{description}</Text>
+            </View>
         </ScrollView>
     );
 }
@@ -26,12 +29,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         margin: 20,
-        padding: 20,
-        borderRadius: 15,
+        
+        borderRadius: 20,
         backgroundColor: Colors.primary,
         elevation: 5,
-        borderWidth: 1,
         borderColor: Colors.border,
+    },
+    main: {
+        padding: 20,
     },
     title: {
         fontSize: 24,
@@ -58,5 +63,10 @@ const styles = StyleSheet.create({
         marginLeft: 25,
         fontSize: 16,
         color: Colors.secondary,
+    },
+    image: {
+        width: '100%',
+        height: 330,
+        borderRadius: 20,
     },
 });

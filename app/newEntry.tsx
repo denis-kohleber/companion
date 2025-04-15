@@ -1,34 +1,74 @@
-import { View, ScrollView, TextInput, Button } from 'react-native';
-import React, { useState } from 'react';
+import {
+    View,
+    ScrollView,
+    TextInput,
+    Button,
+    TouchableOpacity,
+    Text,
+    Image,
+} from 'react-native';
 import { Colors } from '@/utils/colors';
 import { useRouter } from 'expo-router';
 import { Entry } from '@/types/coreTypes';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from '@/store/storage';
+import { AppDispatch, useAppSelector } from '@/store/storage';
 import { addEntry } from '@/store/reducers/entriesSlice';
+import Entypo from '@expo/vector-icons/Entypo';
+import {
+    clearDraft,
+    setDescription,
+    setTitle,
+} from '@/store/reducers/draftSlice';
+import * as FileSystem from 'expo-file-system';
 
 export default function NewEntry() {
     const router = useRouter();
     const dispatch = useDispatch<AppDispatch>();
-    const [title, setTitle] = useState<string>('');
-    const [description, setDescription] = useState<string>('');
-
-    const handleSave = () => {
+    const title = useAppSelector((state) => state.draft.title);
+    const description = useAppSelector((state) => state.draft.description);
+    const photoUri = useAppSelector((state) => state.draft.uri);
+    const handleSave = async () => {
         if (!title || !description) {
             alert('Bitte fülle alle Felder aus.');
             return;
         }
 
+        let finalUri = photoUri;
+
+        // Save the photo to the document directory
+        if (photoUri) {
+            const fileName = photoUri.split('/').pop();
+            if (!FileSystem.documentDirectory) {
+                console.error('Das Dokumentenverzeichnis ist nicht verfügbar.');
+                alert('Das Dokumentenverzeichnis ist nicht verfügbar.');
+                return;
+            }
+            const newPath = FileSystem.documentDirectory + fileName;
+
+            try {
+                await FileSystem.moveAsync({
+                    from: photoUri,
+                    to: newPath,
+                });
+                finalUri = newPath;
+            } catch (error) {
+                console.error('Fehler beim Speichern des Bildes:', error);
+                alert('Fehler beim Speichern des Bildes.');
+                return;
+            }
+        }
+
         const newEntry: Entry = {
             id: Date.now().toString(),
             title,
+            uri: finalUri,
             description,
             date: new Date().toISOString(),
             isMarked: false,
         };
 
         dispatch(addEntry(newEntry));
-
+        dispatch(clearDraft());
         router.navigate('/(tabs)');
     };
 
@@ -39,7 +79,8 @@ export default function NewEntry() {
                     <TextInput
                         style={styles.titleInput}
                         placeholder="Überschrift"
-                        onChangeText={setTitle}
+                        onChangeText={(text) => dispatch(setTitle(text))}
+                        value={title || ''}
                     />
                     <TextInput
                         multiline
@@ -47,8 +88,31 @@ export default function NewEntry() {
                         style={styles.descriptionInput}
                         placeholder="Wie war dein Tag?"
                         textAlignVertical="top"
-                        onChangeText={setDescription}
+                        onChangeText={(text) => dispatch(setDescription(text))}
+                        value={description || ''}
                     />
+
+                    <TouchableOpacity
+                        style={styles.cameraContainer}
+                        onPress={() => router.navigate('../camera')}
+                    >
+                        {photoUri ? (
+                            <Image
+                                source={{ uri: photoUri }}
+                                style={{ width: '100%', height: '100%' }}
+                            />
+                        ) : (
+                            <>
+                                <Entypo
+                                    name="camera"
+                                    size={24}
+                                    color={Colors.secondary}
+                                />
+                                <Text>Foto hinzufügen</Text>
+                            </>
+                        )}
+                    </TouchableOpacity>
+
                     <View style={styles.buttonContainer}>
                         <Button
                             title="Speichern"
@@ -106,5 +170,16 @@ const styles = {
         borderWidth: 1,
         borderColor: Colors.border,
         height: 150,
+    },
+    cameraContainer: {
+        backgroundColor: Colors.primary2,
+        height: 300,
+        overflow: 'hidden' as 'hidden',
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: Colors.border,
+        gap: 10,
+        alignItems: 'center' as 'center',
+        justifyContent: 'center' as 'center',
     },
 };

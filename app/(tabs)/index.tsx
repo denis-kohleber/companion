@@ -11,6 +11,7 @@ export default function Index() {
     const entries = useAppSelector((state) => state.entries.data);
     const isLoading = useAppSelector((state) => state.entries.isLoading);
 
+
     useEffect(() => {
         dispatch(initializeEntries());
     }, [dispatch]);
@@ -38,6 +39,7 @@ export default function Index() {
                                 description={entry.description}
                                 isMarked={entry.isMarked}
                                 date={entry.date}
+                                uri={entry.uri}
                             />
                         ))
                 )}

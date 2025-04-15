@@ -2,6 +2,7 @@ interface Entry {
     id: string;
     title: string;
     description: string;
+    uri: string | null;
     date: string;
     isMarked: boolean;
 }

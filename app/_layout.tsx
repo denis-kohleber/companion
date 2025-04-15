@@ -18,6 +18,12 @@ export default function RootLayout() {
                     name="entryDetail"
                     options={{ title: 'Eintrag' }}
                 />
+                <Stack.Screen
+                    name="camera"
+                    options={{
+                        headerShown: false,
+                    }}
+                />
                 <Stack.Screen name="+not-found" />
             </Stack>
         </Provider>

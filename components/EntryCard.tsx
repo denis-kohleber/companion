@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import React from 'react';
 import { Colors } from '@/utils/colors';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -10,7 +10,13 @@ import { useNavigation } from 'expo-router';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList, Entry } from '@/types/coreTypes';
 
-export default function EntryCard({ title, description, id, isMarked }: Entry) {
+export default function EntryCard({
+    title,
+    description,
+    id,
+    isMarked,
+    uri,
+}: Entry) {
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
@@ -33,20 +39,14 @@ export default function EntryCard({ title, description, id, isMarked }: Entry) {
                     title,
                     description,
                     isMarked,
+                    uri,
                     date: new Date().toISOString(),
                 })
             }
         >
-            <View style={styles.rectangle} />
-            <View style={styles.main}>
-                <View style={styles.cardHeader}>
-                    <Text
-                        style={styles.title}
-                        numberOfLines={1}
-                        ellipsizeMode="tail"
-                    >
-                        {title}
-                    </Text>
+            {uri && (
+                <View>
+                    <Image source={{ uri: uri }} style={styles.image} />
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity
                             style={styles.button}
@@ -72,6 +72,20 @@ export default function EntryCard({ title, description, id, isMarked }: Entry) {
                         </TouchableOpacity>
                     </View>
                 </View>
+            )}
+            <View style={styles.main}>
+                <View style={styles.cardHeader}>
+                    <Text
+                        style={styles.title}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                    >
+                        {title}
+                    </Text>
+                    <Text style={styles.date}>
+                        {new Date().toLocaleDateString()}
+                    </Text>
+                </View>
                 <Text
                     style={styles.description}
                     numberOfLines={4}
@@ -79,6 +93,7 @@ export default function EntryCard({ title, description, id, isMarked }: Entry) {
                 >
                     {description}
                 </Text>
+                <View style={styles.rectangle} />
             </View>
         </TouchableOpacity>
     );
@@ -88,27 +103,36 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: Colors.primary,
         color: Colors.secondary,
-        padding: 20,
         borderRadius: 20,
-        flexDirection: 'row',
-        gap: 20,
-        borderWidth: 1,
         borderColor: Colors.border,
         elevation: 5,
+        overflow: 'hidden',
     },
     rectangle: {
-        height: '100%',
-        width: 10,
+        height: 5 ,
+        width: "100%",
+        maxWidth: 100,
+        alignSelf: 'center',
         backgroundColor: Colors.accent,
         borderRadius: 5,
+        marginTop: 10,
     },
     main: {
         flex: 1,
+        padding: 20,
+        paddingTop: 15,
+        paddingBottom: 12,
+        gap: 5,
     },
     cardHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+    },
+    image: {
+        width: '100%',
+        height: 200,
+        borderRadius: 20,
     },
     title: {
         color: Colors.secondary,
@@ -116,12 +140,20 @@ const styles = StyleSheet.create({
         fontWeight: 400,
         maxWidth: 210,
     },
+    date: {
+        color: Colors.secondary2,
+        fontSize: 12,
+        fontWeight: 400,
+    },
     description: {
         color: Colors.secondary,
     },
     buttonContainer: {
         flexDirection: 'row',
         gap: 10,
+        position: 'absolute',
+        top: 10,
+        right: 10,
     },
     button: {
         backgroundColor: Colors.primary,
